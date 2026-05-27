@@ -4,45 +4,424 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ExploreGuard — Smart Tourist Companion</title>
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
   <style>
+    :root {
+      --primary: #1D9E75;
+      --primary-hover: #157A5A;
+      --primary-light: #e1f5ee;
+      --accent: #E2B13C;
+      --dark: #0f172a;
+      --dark-muted: #475569;
+      --light: #f8fafc;
+      --white: #ffffff;
+      --glass: rgba(255, 255, 255, 0.85);
+      --border: rgba(226, 232, 240, 0.8);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 10px 30px rgba(29, 158, 117, 0.08);
+      --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.06);
+      --font: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: #fff; }
-    nav { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; border-bottom: 1px solid #eee; position: sticky; top: 0; background: #fff; z-index: 10; }
-    .logo { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 700; color: #1D9E75; }
-    .nav-links { display: flex; gap: 24px; }
-    .nav-links a { text-decoration: none; color: #555; font-size: 14px; }
-    .nav-links a:hover { color: #1D9E75; }
-    .nav-cta { padding: 8px 20px; background: #1D9E75; color: #fff; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; text-decoration: none; }
-    .hero { padding: 5rem 2rem; text-align: center; background: linear-gradient(135deg, #e1f5ee 0%, #f0faf5 100%); }
-    .hero-badge { display: inline-block; background: #c8f0df; color: #0F6E56; padding: 5px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; margin-bottom: 1.5rem; }
-    .hero h1 { font-size: clamp(32px, 6vw, 56px); font-weight: 700; color: #1a1a1a; line-height: 1.15; margin-bottom: 1rem; }
-    .hero h1 span { color: #1D9E75; }
-    .hero p { font-size: 18px; color: #555; max-width: 540px; margin: 0 auto 2rem; line-height: 1.7; }
-    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .btn-primary { padding: 13px 30px; background: #1D9E75; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 500; cursor: pointer; text-decoration: none; }
-    .btn-secondary { padding: 13px 30px; background: #fff; color: #1D9E75; border: 2px solid #1D9E75; border-radius: 10px; font-size: 16px; cursor: pointer; text-decoration: none; }
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
-    .stat { padding: 1.5rem; text-align: center; border-right: 1px solid #eee; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--light); color: var(--dark); line-height: 1.6; }
+
+    /* Sticky Nav Overhaul */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 5%;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .logo i {
+      color: var(--primary);
+      stroke-width: 2.5;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--dark-muted);
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.2s ease;
+    }
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    .nav-cta {
+      padding: 10px 24px;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(29, 158, 117, 0.25);
+      transition: all 0.2s ease;
+    }
+    .nav-cta:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(29, 158, 117, 0.35);
+    }
+
+    /* Premium Responsive Hero */
+    .hero {
+      position: relative;
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 10% 8rem;
+      background: linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.75)), url('northeast_hero.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: scroll;
+      color: var(--white);
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(29, 158, 117, 0.2);
+      border: 1px solid rgba(29, 158, 117, 0.4);
+      color: #7ee8c4;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(8px);
+      animation: fadeInDown 0.6s ease-out;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 68px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -2px;
+      max-width: 900px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, #a7f3d0 0%, #1d9e75 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: clamp(16px, 2vw, 20px);
+      opacity: 0.9;
+      max-width: 680px;
+      margin: 0 auto 3rem;
+      line-height: 1.8;
+      font-weight: 350;
+      animation: fadeInUp 1s ease-out;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 1.2s ease-out;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(29, 158, 117, 0.3);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 25px rgba(29, 158, 117, 0.4);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: var(--white);
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Stats Section Overhaul */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: var(--white);
+      max-width: 1200px;
+      margin: -4rem auto 0;
+      position: relative;
+      z-index: 5;
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .stat {
+      padding: 2.5rem 2rem;
+      text-align: center;
+      border-right: 1px solid #f1f5f9;
+      transition: all 0.3s ease;
+    }
+    .stat:hover {
+      background: #f8fafc;
+    }
     .stat:last-child { border-right: none; }
-    .stat-num { font-size: 28px; font-weight: 700; color: #1D9E75; }
-    .stat-label { font-size: 13px; color: #888; margin-top: 4px; }
-    .features { padding: 4rem 2rem; max-width: 1100px; margin: 0 auto; }
-    .section-label { font-size: 12px; font-weight: 600; color: #1D9E75; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-    .section-title { font-size: 32px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.75rem; }
-    .section-sub { font-size: 16px; color: #666; max-width: 500px; line-height: 1.7; margin-bottom: 3rem; }
-    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-    .feature-card { background: #fff; border: 1px solid #eee; border-radius: 14px; padding: 1.5rem; }
-    .f-icon { font-size: 32px; margin-bottom: 12px; }
-    .f-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
-    .f-desc { font-size: 14px; color: #666; line-height: 1.6; }
-    footer { background: #f8f8f8; padding: 2rem; text-align: center; border-top: 1px solid #eee; font-size: 14px; color: #888; }
-    footer span { color: #1D9E75; font-weight: 500; }
-    @media(max-width: 600px) { .stats { grid-template-columns: 1fr 1fr; } .stat { border-right: none; border-bottom: 1px solid #eee; } .nav-links { display: none; } }
+    .stat-num {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -1px;
+    }
+    .stat-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark-muted);
+      margin-top: 8px;
+    }
+
+    /* Core Features */
+    .features {
+      padding: 8rem 5% 7rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 4.5rem;
+    }
+    .section-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -1px;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      font-size: 17px;
+      color: var(--dark-muted);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(29, 158, 117, 0.15);
+    }
+    .feature-card:hover::before {
+      transform: scaleY(1);
+    }
+    .f-icon-box {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      transition: all 0.3s ease;
+    }
+    .feature-card:hover .f-icon-box {
+      background: var(--primary);
+      color: var(--white);
+    }
+    .f-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+    .f-desc {
+      font-size: 15px;
+      color: var(--dark-muted);
+      line-height: 1.7;
+    }
+
+    /* Elegant Footer */
+    footer {
+      background: var(--dark);
+      color: #94a3b8;
+      padding: 4rem 5% 3rem;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 15px;
+    }
+    footer p {
+      margin-bottom: 1.5rem;
+    }
+    footer span {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    footer .footer-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      color: var(--white);
+      font-size: 20px;
+      margin-bottom: 1.5rem;
+      text-decoration: none;
+    }
+    footer .footer-logo i {
+      color: var(--primary);
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media(max-width: 900px) {
+      .stats {
+        grid-template-columns: 1fr 1fr;
+        margin-top: -3rem;
+        border-radius: 14px;
+      }
+      .stat {
+        padding: 2rem 1.5rem;
+      }
+    }
+    @media(max-width: 600px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+      .stat {
+        border-right: none;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .stat:last-child {
+        border-bottom: none;
+      }
+      .nav-links {
+        display: none;
+      }
+      .hero {
+        padding: 4rem 5% 6rem;
+      }
+    }
   </style>
 </head>
 <body>
 <nav>
-  <div class="logo">🗺 ExploreGuard</div>
+  <a class="logo" href="index.html">
+    <i data-lucide="map"></i> ExploreGuard
+  </a>
   <div class="nav-links">
     <a href="#features">Features</a>
     <a href="alerts.html">Alerts</a>
@@ -52,62 +431,99 @@
 </nav>
 
 <section class="hero">
-  <div class="hero-badge">🌿 Smart · Safe · Seamless Travel in Northeast India</div>
+  <div class="hero-badge">
+    <i data-lucide="sparkles" style="width:16px; height:16px;"></i> Smart · Safe · Seamless Travel in Northeast India
+  </div>
   <h1>Your complete <span>tourist companion</span><br/>for Northeast India</h1>
-  <p>Book transport, track your journey, get real-time safety alerts, and access emergency contacts — all in one free platform.</p>
+  <p>Book transport, track your journey, get real-time safety alerts, and access emergency contacts — all in one free, premium platform.</p>
   <div class="hero-btns">
-    <a class="btn-primary" href="login.html">Start Exploring →</a>
-    <a class="btn-secondary" href="#features">See Features</a>
+    <a class="btn-primary" href="login.html">Start Exploring <i data-lucide="arrow-right"></i></a>
+    <a class="btn-secondary" href="#features">See Features <i data-lucide="arrow-down"></i></a>
   </div>
 </section>
 
 <div class="stats">
-  <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Destinations covered</div></div>
-  <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Safety monitoring</div></div>
-  <div class="stat"><div class="stat-num">8</div><div class="stat-label">Manipur districts</div></div>
-  <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Free to use</div></div>
+  <div class="stat">
+    <div class="stat-num">50+</div>
+    <div class="stat-label">Destinations Covered</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">24/7</div>
+    <div class="stat-label">Safety Monitoring</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">8</div>
+    <div class="stat-label">Manipur Districts</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Free to Use</div>
+  </div>
 </div>
 
 <section class="features" id="features">
-  <div class="section-label">Core Features</div>
-  <div class="section-title">Everything a traveller needs</div>
-  <div class="section-sub">From the moment you plan your trip to the moment you return home safely.</div>
+  <div class="section-header">
+    <span class="section-label">Core Features</span>
+    <h2 class="section-title">Everything a traveler needs</h2>
+    <p class="section-sub">From the moment you plan your trip to the moment you return home safely.</p>
+  </div>
   <div class="features-grid">
     <div class="feature-card">
-      <div class="f-icon">✈️</div>
-      <div class="f-title">Unified ticket booking</div>
-      <div class="f-desc">Book flights, trains, and cabs from one dashboard. Save and manage all your bookings.</div>
+      <div class="f-icon-box">
+        <i data-lucide="plane"></i>
+      </div>
+      <div class="f-title">Unified Ticket Booking</div>
+      <div class="f-desc">Book flights, trains, and cabs from one unified dashboard. Save, manage, and retrieve all your bookings instantly.</div>
     </div>
     <div class="feature-card">
-      <div class="f-icon">⛈️</div>
-      <div class="f-title">Live weather alerts</div>
-      <div class="f-desc">Real-time weather data for any city. Smart safety alerts for storms, floods, and poor visibility.</div>
+      <div class="f-icon-box">
+        <i data-lucide="cloud-lightning"></i>
+      </div>
+      <div class="f-title">Live Weather & Safety Alerts</div>
+      <div class="f-desc">Real-time weather telemetry for any city in Northeast India. Intelligent safety warnings for storms, floods, and poor driving visibility.</div>
     </div>
     <div class="feature-card">
-      <div class="f-icon">📍</div>
-      <div class="f-title">Consent-based tracker</div>
-      <div class="f-desc">Share your live GPS location with trusted contacts only when you choose to. One tap to stop.</div>
+      <div class="f-icon-box">
+        <i data-lucide="map-pin"></i>
+      </div>
+      <div class="f-title">Consent-Based Tracker</div>
+      <div class="f-desc">Share your live, granular GPS coordinates with trusted emergency contacts only when you want to. Stop sharing at any time.</div>
     </div>
     <div class="feature-card">
-      <div class="f-icon">🛡️</div>
-      <div class="f-title">Local emergency contacts</div>
-      <div class="f-desc">District-wise police, hospital, and helpline numbers. One tap to call in any emergency.</div>
+      <div class="f-icon-box">
+        <i data-lucide="shield"></i>
+      </div>
+      <div class="f-title">Local Emergency Contacts</div>
+      <div class="f-desc">Highly localized, district-wise directory of police stations, medical hubs, and search teams. Tap to dial instantly.</div>
     </div>
     <div class="feature-card">
-      <div class="f-icon">🚨</div>
-      <div class="f-title">SOS emergency button</div>
-      <div class="f-desc">Instant access to national emergency helpline 112. Always visible, always one tap away.</div>
+      <div class="f-icon-box">
+        <i data-lucide="alert-triangle"></i>
+      </div>
+      <div class="f-title">SOS Emergency Button</div>
+      <div class="f-desc">Immediate, one-tap trigger calling the national emergency response system 112. Always accessible in critical times.</div>
     </div>
     <div class="feature-card">
-      <div class="f-icon">🔐</div>
-      <div class="f-title">Secure login system</div>
-      <div class="f-desc">Your bookings and data are private, secured by Firebase Authentication.</div>
+      <div class="f-icon-box">
+        <i data-lucide="lock"></i>
+      </div>
+      <div class="f-title">Secure Authentication</div>
+      <div class="f-desc">Rest assured your travel data is perfectly confidential, secured robustly by global-standard Firebase authentication protocols.</div>
     </div>
   </div>
 </section>
 
 <footer>
-  <p><span>ExploreGuard</span> · Built for safer, smarter tourism in Northeast India · © 2026</p>
+  <a class="footer-logo" href="index.html">
+    <i data-lucide="map"></i> ExploreGuard
+  </a>
+  <p>Built for safer, smarter tourism in Northeast India · © 2026</p>
+  <p style="font-size: 13px; opacity: 0.5;">Secure · Free · Traveler First</p>
 </footer>
+
+<script>
+  // Dynamic Lucide Icon generation
+  lucide.createIcons();
+</script>
 </body>
 </html>

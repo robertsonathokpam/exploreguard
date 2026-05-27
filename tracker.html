@@ -4,57 +4,367 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ExploreGuard — Location Tracker</title>
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
+    :root {
+      --primary: #1D9E75;
+      --primary-hover: #157A5A;
+      --primary-light: #e1f5ee;
+      --accent: #E2B13C;
+      --dark: #0f172a;
+      --dark-muted: #475569;
+      --light: #f8fafc;
+      --white: #ffffff;
+      --border: rgba(15, 23, 42, 0.08);
+      --glass: rgba(255, 255, 255, 0.88);
+      --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.02);
+      --shadow-md: 0 10px 30px rgba(29, 158, 117, 0.08);
+      --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.05);
+      --font: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: #f0faf5; min-height: 100vh; }
-    nav { background: #fff; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0; }
-    .nav-logo { font-size: 20px; font-weight: 600; color: #1D9E75; }
-    .back-btn { padding: 7px 16px; background: transparent; border: 1.5px solid #1D9E75; color: #1D9E75; border-radius: 8px; font-size: 14px; text-decoration: none; }
-    .container { max-width: 700px; margin: 2rem auto; padding: 0 1rem; }
-    h2 { font-size: 24px; color: #1a1a1a; margin-bottom: 0.3rem; }
-    .subtitle { color: #666; font-size: 15px; margin-bottom: 2rem; }
-    .card { background: #fff; border-radius: 14px; padding: 1.5rem; border: 1px solid #e8e8e8; margin-bottom: 16px; }
-    .consent-box { background: #fff8e1; border: 1.5px solid #f9ca24; border-radius: 10px; padding: 14px; margin-bottom: 1.5rem; font-size: 14px; color: #7d6608; }
-    .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    .toggle-label { font-size: 16px; font-weight: 500; color: #1a1a1a; }
-    .toggle { position: relative; width: 50px; height: 26px; }
+    body {
+      font-family: var(--font);
+      background: linear-gradient(135deg, rgba(240, 250, 245, 0.93), rgba(225, 245, 238, 0.93)), url('travel_bg.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: var(--dark);
+    }
+
+    /* Navigation */
+    nav {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 1.25rem 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: transparent;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: 0 4px 10px rgba(29, 158, 117, 0.2);
+    }
+
+    /* Layout */
+    .container {
+      max-width: 700px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    .header-section {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      animation: fadeInDown 0.5s ease;
+    }
+    h2 {
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -1.5px;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--dark-muted);
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    /* Privacy Banner */
+    .consent-box {
+      background: #fef9e7;
+      border: 1px solid rgba(226, 177, 60, 0.2);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 1.75rem;
+      font-size: 14px;
+      color: #7d6608;
+      display: flex;
+      gap: 12px;
+      line-height: 1.6;
+      animation: fadeInUp 0.5s ease;
+    }
+    .consent-box i {
+      color: var(--accent);
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Secure Tracker Console */
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 24px;
+      padding: 2.5rem 2.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-lg);
+      animation: fadeInUp 0.6s ease;
+    }
+    
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    }
+    .toggle-label {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toggle-label i {
+      color: var(--primary);
+    }
+    
+    /* Elegant iOS Switch */
+    .toggle {
+      position: relative;
+      width: 54px;
+      height: 28px;
+    }
     .toggle input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; inset: 0; background: #ccc; border-radius: 26px; cursor: pointer; transition: 0.3s; }
-    .slider:before { content: ''; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
-    input:checked + .slider { background: #1D9E75; }
-    input:checked + .slider:before { transform: translateX(24px); }
-    .location-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 1rem 0; }
-    .info-box { background: #f8f8f8; border-radius: 8px; padding: 12px; text-align: center; }
-    .info-val { font-size: 15px; font-weight: 600; color: #1a1a1a; }
-    .info-key { font-size: 12px; color: #888; margin-top: 3px; }
-    .share-link-box { background: #e1f5ee; border-radius: 10px; padding: 14px; margin-top: 12px; }
-    .share-link-box p { font-size: 13px; color: #0F6E56; margin-bottom: 8px; }
-    .link-row { display: flex; gap: 8px; }
-    .link-row input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; }
-    .copy-btn { padding: 8px 14px; background: #1D9E75; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
-    .status { font-size: 14px; color: #888; margin-top: 8px; }
-    .status.active { color: #1D9E75; }
-    .status.error { color: #e74c3c; }
-    #map-frame { width: 100%; height: 300px; border-radius: 10px; border: none; margin-top: 1rem; }
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 28px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .slider:before {
+      content: '';
+      position: absolute;
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background: var(--white);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    input:checked + .slider {
+      background: var(--primary);
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Stats Display */
+    .location-info {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
+      padding: 14px 10px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+    .info-box:hover {
+      background: var(--white);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+    .info-box i {
+      color: var(--primary);
+      width: 18px;
+      height: 18px;
+    }
+    .info-val {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--dark);
+    }
+    .info-key {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--dark-muted);
+    }
+
+    /* Live status */
+    .status {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--dark-muted);
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status.active {
+      color: var(--primary);
+    }
+    .status.active i {
+      animation: pulse 1.5s infinite;
+    }
+    .status.error {
+      color: #c0392b;
+    }
+
+    /* Telemetry link sharing box */
+    .share-link-box {
+      background: var(--primary-light);
+      border: 1px solid rgba(29, 158, 117, 0.15);
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 1.5rem;
+      animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .share-link-box p {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary-hover);
+      margin-bottom: 10px;
+    }
+    .link-row {
+      display: flex;
+      gap: 8px;
+    }
+    .link-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1.5px solid rgba(29, 158, 117, 0.15);
+      border-radius: 10px;
+      font-size: 13.5px;
+      background: var(--white);
+      outline: none;
+      color: var(--dark);
+      font-family: var(--font);
+    }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13.5px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(29, 158, 117, 0.15);
+      transition: all 0.2s ease;
+    }
+    .copy-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Embedded map */
+    #map-frame {
+      width: 100%;
+      height: 320px;
+      border-radius: 16px;
+      border: 1.5px solid rgba(15, 23, 42, 0.08);
+      margin-top: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      animation: fadeInUp 0.5s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    @media(max-width: 600px) {
+      .location-info {
+        grid-template-columns: 1fr 1fr;
+      }
+      .card {
+        padding: 2rem 1.25rem;
+      }
+    }
   </style>
 </head>
 <body>
 <nav>
-  <span class="nav-logo">🗺 ExploreGuard</span>
-  <a class="back-btn" href="dashboard.html">← Dashboard</a>
+  <a class="nav-logo" href="index.html">
+    <i data-lucide="map" style="stroke-width:2.5px;"></i> ExploreGuard
+  </a>
+  <a class="back-btn" href="dashboard.html"><i data-lucide="arrow-left" style="width:16px;"></i> Dashboard</a>
 </nav>
 
 <div class="container">
-  <h2>📍 Location Tracker</h2>
-  <p class="subtitle">Share your live location with trusted contacts — with your consent only</p>
+  <div class="header-section">
+    <h2>GPS Journey Tracker</h2>
+    <p class="subtitle">Consent-driven live coordinate telemetry for security sharing</p>
+  </div>
 
   <div class="consent-box">
-    🔒 <strong>Privacy first:</strong> Your location is only shared when you turn on the toggle below. You can stop sharing at any time. We never track you without permission.
+    <i data-lucide="shield-check"></i>
+    <span><strong>Privacy Guaranteed:</strong> Satellite tracking triggers exclusively on active toggle authorization. System data clears immediately upon toggle deactivation. We operate on Zero Background Logging standards.</span>
   </div>
 
   <div class="card">
     <div class="toggle-row">
-      <span class="toggle-label">Share my location</span>
+      <span class="toggle-label"><i data-lucide="navigation"></i> Enable Location Telemetry</span>
       <label class="toggle">
         <input type="checkbox" id="share-toggle" onchange="toggleSharing()"/>
         <span class="slider"></span>
@@ -63,34 +373,42 @@
 
     <div class="location-info">
       <div class="info-box">
+        <i data-lucide="compass"></i>
         <div class="info-val" id="lat-val">--</div>
         <div class="info-key">Latitude</div>
       </div>
       <div class="info-box">
+        <i data-lucide="compass" style="transform: rotate(90deg);"></i>
         <div class="info-val" id="lng-val">--</div>
         <div class="info-key">Longitude</div>
       </div>
       <div class="info-box">
+        <i data-lucide="activity"></i>
         <div class="info-val" id="accuracy-val">--</div>
         <div class="info-key">Accuracy</div>
       </div>
       <div class="info-box">
+        <i data-lucide="clock"></i>
         <div class="info-val" id="updated-val">--</div>
-        <div class="info-key">Last updated</div>
+        <div class="info-key">Last Updated</div>
       </div>
     </div>
 
-    <p class="status" id="status-msg">Toggle on to start sharing your location</p>
+    <p class="status" id="status-msg">
+      <i data-lucide="info" style="width:16px; height:16px; display:inline;"></i> Set switch to active to initialize satellite tracking.
+    </p>
 
     <div class="share-link-box" id="share-link-box" style="display:none">
-      <p>Share this link with your trusted contact to let them see your location:</p>
+      <p>Send this link to a trusted contact for live map visualization:</p>
       <div class="link-row">
         <input type="text" id="share-link" readonly/>
-        <button class="copy-btn" onclick="copyLink()">Copy</button>
+        <button class="copy-btn" onclick="copyLink()">
+          <i data-lucide="copy" style="width:14px;"></i> Copy Link
+        </button>
       </div>
     </div>
 
-    <iframe id="map-frame" style="display:none"></iframe>
+    <iframe id="map-frame" style="display:none" allowfullscreen></iframe>
   </div>
 </div>
 
@@ -98,6 +416,9 @@
   import { auth, db } from './firebase-config.js';
   import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // Initializing Lucide Icons
+  lucide.createIcons();
 
   let currentUser = null;
   let watchId = null;
@@ -114,13 +435,17 @@
     const status = document.getElementById('status-msg');
 
     if (isOn) {
-      status.textContent = 'Requesting location access...';
+      status.innerHTML = `<i data-lucide="loader" class="animate-spin" style="width:16px; height:16px; display:inline;"></i> Handshaking GPS satellite grid...`;
       status.className = 'status';
+      lucide.createIcons();
+      
       if (!navigator.geolocation) {
-        status.textContent = 'GPS not supported on this device.';
+        status.innerHTML = `<i data-lucide="alert-circle" style="width:16px; height:16px; display:inline;"></i> Local hardware does not support GPS sensors.`;
         status.className = 'status error';
+        lucide.createIcons();
         return;
       }
+      
       // Start watching GPS position — updates every time you move
       watchId = navigator.geolocation.watchPosition(
         async (pos) => {
@@ -129,8 +454,11 @@
           document.getElementById('lng-val').textContent = longitude.toFixed(5);
           document.getElementById('accuracy-val').textContent = Math.round(accuracy) + 'm';
           document.getElementById('updated-val').textContent = new Date().toLocaleTimeString();
-          status.textContent = '🟢 Sharing live — contacts can see your location';
+          
+          status.innerHTML = `<i data-lucide="wifi" style="width:16px; height:16px; display:inline;"></i> Granular tracking active — streaming coordinates live.`;
           status.className = 'status active';
+          lucide.createIcons();
+          
           document.getElementById('share-link-box').style.display = 'block';
 
           // Show map
@@ -142,7 +470,7 @@
           if (currentUser) {
             await setDoc(doc(db, 'locations', currentUser.uid), {
               uid: currentUser.uid,
-              name: currentUser.displayName || 'Traveller',
+              name: currentUser.displayName || 'Traveler',
               latitude, longitude, accuracy,
               updatedAt: new Date().toISOString(),
               sharing: true
@@ -150,8 +478,9 @@
           }
         },
         (err) => {
-          status.textContent = 'Location access denied. Please allow in browser settings.';
+          status.innerHTML = `<i data-lucide="alert-triangle" style="width:16px; height:16px; display:inline;"></i> Sensor access denied. Verify system-level permissions.`;
           status.className = 'status error';
+          lucide.createIcons();
           document.getElementById('share-toggle').checked = false;
         },
         { enableHighAccuracy: true, maximumAge: 10000 }
@@ -160,19 +489,29 @@
       // Stop sharing — DELETE location from Firestore
       if (watchId) navigator.geolocation.clearWatch(watchId);
       if (currentUser) await deleteDoc(doc(db, 'locations', currentUser.uid));
-      status.textContent = '⭕ Sharing stopped. Your location is no longer visible.';
+      
+      status.innerHTML = `<i data-lucide="info" style="width:16px; height:16px; display:inline;"></i> Telemetry stream stopped. Sensor details deleted.`;
       status.className = 'status';
+      lucide.createIcons();
+      
       document.getElementById('share-link-box').style.display = 'none';
       document.getElementById('map-frame').style.display = 'none';
       document.getElementById('lat-val').textContent = '--';
       document.getElementById('lng-val').textContent = '--';
+      document.getElementById('accuracy-val').textContent = '--';
+      document.getElementById('updated-val').textContent = '--';
     }
   };
 
   window.copyLink = () => {
     navigator.clipboard.writeText(document.getElementById('share-link').value);
-    document.querySelector('.copy-btn').textContent = 'Copied!';
-    setTimeout(() => document.querySelector('.copy-btn').textContent = 'Copy', 2000);
+    const copyBtn = document.querySelector('.copy-btn');
+    copyBtn.innerHTML = '<i data-lucide="check" style="width:14px;"></i> Copied!';
+    lucide.createIcons();
+    setTimeout(() => {
+      copyBtn.innerHTML = '<i data-lucide="copy" style="width:14px;"></i> Copy Link';
+      lucide.createIcons();
+    }, 2000);
   };
 </script>
 </body>

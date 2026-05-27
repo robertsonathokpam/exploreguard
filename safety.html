@@ -4,76 +4,468 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ExploreGuard — Safety</title>
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
+    :root {
+      --primary: #1D9E75;
+      --primary-hover: #157A5A;
+      --primary-light: #e1f5ee;
+      --accent: #E2B13C;
+      --danger: #c0392b;
+      --danger-hover: #a0281c;
+      --dark: #0f172a;
+      --dark-muted: #475569;
+      --light: #f8fafc;
+      --white: #ffffff;
+      --border: rgba(15, 23, 42, 0.08);
+      --glass: rgba(255, 255, 255, 0.88);
+      --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.02);
+      --shadow-md: 0 10px 30px rgba(29, 158, 117, 0.08);
+      --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.05);
+      --font: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: #f0faf5; min-height: 100vh; }
-    nav { background: #fff; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0; }
-    .nav-logo { font-size: 20px; font-weight: 600; color: #1D9E75; }
-    .back-btn { padding: 7px 16px; background: transparent; border: 1.5px solid #1D9E75; color: #1D9E75; border-radius: 8px; font-size: 14px; text-decoration: none; }
-    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-    h2 { font-size: 24px; color: #1a1a1a; margin-bottom: 0.3rem; }
-    .subtitle { color: #666; font-size: 15px; margin-bottom: 2rem; }
-    .district-row { display: flex; gap: 10px; margin-bottom: 2rem; flex-wrap: wrap; }
-    .district-row label { font-size: 14px; color: #555; font-weight: 500; align-self: center; }
-    .district-row select { padding: 9px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; flex: 1; max-width: 300px; }
-    .district-row select:focus { border-color: #1D9E75; }
-    .contacts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 2rem; }
-    .contact-card { background: #fff; border-radius: 12px; padding: 1.25rem; border: 1px solid #e8e8e8; display: flex; align-items: flex-start; gap: 12px; }
-    .contact-icon { font-size: 28px; flex-shrink: 0; }
-    .contact-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; }
-    .contact-num { font-size: 22px; font-weight: 700; color: #1D9E75; }
-    .contact-note { font-size: 12px; color: #888; margin-top: 3px; }
-    .call-btn { display: inline-block; margin-top: 6px; padding: 5px 12px; background: #e1f5ee; color: #0F6E56; border-radius: 6px; font-size: 13px; text-decoration: none; font-weight: 500; }
-    .sos-card { background: #c0392b; border-radius: 14px; padding: 1.5rem; color: #fff; text-align: center; margin-bottom: 2rem; }
-    .sos-card h3 { font-size: 20px; margin-bottom: 6px; }
-    .sos-card p { font-size: 14px; opacity: 0.85; margin-bottom: 1rem; }
-    .sos-btn { display: inline-block; padding: 12px 32px; background: #fff; color: #c0392b; border-radius: 8px; font-size: 16px; font-weight: 700; text-decoration: none; }
-    .tips-card { background: #fff; border-radius: 14px; padding: 1.5rem; border: 1px solid #e8e8e8; }
-    .tips-card h3 { font-size: 18px; margin-bottom: 1rem; color: #1a1a1a; }
-    .tip { display: flex; gap: 10px; margin-bottom: 10px; font-size: 14px; color: #444; }
-    .tip-icon { font-size: 18px; flex-shrink: 0; }
+    body {
+      font-family: var(--font);
+      background: linear-gradient(135deg, rgba(240, 250, 245, 0.93), rgba(225, 245, 238, 0.93)), url('travel_bg.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: var(--dark);
+    }
+
+    /* Navigation */
+    nav {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 1.25rem 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: transparent;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: 0 4px 10px rgba(29, 158, 117, 0.2);
+    }
+
+    /* Layout */
+    .container {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    .header-section {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      animation: fadeInDown 0.5s ease;
+    }
+    h2 {
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -1.5px;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--dark-muted);
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    /* Pulsating High-Impact SOS Button */
+    .sos-card {
+      background: linear-gradient(135deg, #c0392b, #962d22);
+      border-radius: 24px;
+      padding: 2.5rem 2.25rem;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 15px 30px rgba(192, 57, 43, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.5s ease;
+    }
+    .sos-card h3 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .sos-card p {
+      font-size: 14.5px;
+      opacity: 0.9;
+      margin-bottom: 1.75rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+    .sos-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 38px;
+      background: var(--white);
+      color: var(--danger);
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .sos-btn:hover {
+      transform: scale(1.03) translateY(-2px);
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.25);
+    }
+    /* Animated pulsating glowing ring around SOS */
+    .sos-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50px;
+      border: 2px solid var(--white);
+      animation: pulse-ring 2s infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* District Selection Row */
+    .district-row {
+      background: var(--glass);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 16px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.5s ease;
+    }
+    .district-row label {
+      font-size: 14px;
+      color: var(--dark);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .district-row label i {
+      color: var(--primary);
+    }
+    .district-row select {
+      flex: 1;
+      min-width: 250px;
+      padding: 10px 14px 10px 42px;
+      border: 1.5px solid rgba(15, 23, 42, 0.1);
+      border-radius: 12px;
+      font-size: 14.5px;
+      font-family: var(--font);
+      outline: none;
+      background: rgba(255, 255, 255, 0.9);
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+      transition: all 0.2s ease;
+    }
+    .district-row select:focus {
+      border-color: var(--primary);
+      background: var(--white);
+    }
+    .select-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .select-wrapper i {
+      position: absolute;
+      left: 14px;
+      color: var(--dark-muted);
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Emergency Contacts Grid */
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 2.5rem;
+      animation: fadeInUp 0.6s ease;
+    }
+    .contact-card {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+    }
+    .contact-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(29, 158, 117, 0.2);
+    }
+    .contact-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .contact-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 3px;
+    }
+    .contact-num {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+    .contact-note {
+      font-size: 12.5px;
+      color: var(--dark-muted);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+    .call-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 6px 14px;
+      background: var(--primary-light);
+      color: var(--primary-hover);
+      border-radius: 8px;
+      font-size: 13px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      align-self: flex-start;
+    }
+    .call-btn:hover {
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: 0 4px 10px rgba(29, 158, 117, 0.15);
+    }
+
+    /* Safety Advice Card */
+    .tips-card {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 2.25rem 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: var(--shadow-lg);
+      animation: fadeInUp 0.7s ease;
+    }
+    .tips-card h3 {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tips-card h3 i {
+      color: var(--primary);
+    }
+    .tip {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 1rem;
+      font-size: 14.5px;
+      color: var(--dark-muted);
+      line-height: 1.6;
+      align-items: flex-start;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+    }
+    .tip:last-child {
+      margin-bottom: 0;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .tip-icon-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .tip-text {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      100% { transform: scale(1.15); opacity: 0; }
+    }
+
+    @media(max-width: 600px) {
+      .sos-card {
+        padding: 2rem 1.25rem;
+      }
+      .tips-card {
+        padding: 1.75rem 1.25rem;
+      }
+    }
   </style>
 </head>
 <body>
 <nav>
-  <span class="nav-logo">🗺 ExploreGuard</span>
-  <a class="back-btn" href="dashboard.html">← Dashboard</a>
+  <a class="nav-logo" href="index.html">
+    <i data-lucide="map" style="stroke-width:2.5px;"></i> ExploreGuard
+  </a>
+  <a class="back-btn" href="dashboard.html"><i data-lucide="arrow-left" style="width:16px;"></i> Dashboard</a>
 </nav>
 
 <div class="container">
-  <h2>🛡️ Safety & Emergency Contacts</h2>
-  <p class="subtitle">Select your district to see local emergency numbers</p>
+  <div class="header-section">
+    <h2>Emergency Services Portal</h2>
+    <p class="subtitle">Instant crisis dialing & localized district support</p>
+  </div>
 
   <div class="sos-card">
-    <h3>🚨 Emergency SOS</h3>
-    <p>In immediate danger? Call the national emergency helpline instantly.</p>
-    <a class="sos-btn" href="tel:112">📞 Call 112 — National Emergency</a>
+    <h3><i data-lucide="alert-triangle"></i> EMERGENCY SOS</h3>
+    <p>In immediate risk, severe climate traps, or personal danger, trigger the national security helpline network instantly.</p>
+    <a class="sos-btn" href="tel:112"><i data-lucide="phone-call" style="z-index:2;"></i> Dial 112 — National Emergency</a>
   </div>
 
   <div class="district-row">
-    <label>Your district:</label>
-    <select id="district-select" onchange="loadContacts()">
-      <option value="imphal-east">Imphal East</option>
-      <option value="imphal-west">Imphal West</option>
-      <option value="thoubal">Thoubal</option>
-      <option value="bishnupur">Bishnupur</option>
-      <option value="churachandpur">Churachandpur</option>
-      <option value="senapati">Senapati</option>
-      <option value="ukhrul">Ukhrul</option>
-      <option value="chandel">Chandel</option>
-    </select>
+    <label><i data-lucide="map"></i> Select District:</label>
+    <div class="select-wrapper">
+      <select id="district-select" onchange="loadContacts()">
+        <option value="imphal-east">Imphal East</option>
+        <option value="imphal-west">Imphal West</option>
+        <option value="thoubal">Thoubal</option>
+        <option value="bishnupur">Bishnupur</option>
+        <option value="churachandpur">Churachandpur</option>
+        <option value="senapati">Senapati</option>
+        <option value="ukhrul">Ukhrul</option>
+        <option value="chandel">Chandel</option>
+      </select>
+      <i data-lucide="map-pin"></i>
+    </div>
   </div>
 
   <div class="contacts-grid" id="contacts-grid"></div>
 
   <div class="tips-card">
-    <h3>🧠 Tourist Safety Tips</h3>
-    <div class="tip"><span class="tip-icon">📱</span> Save local emergency numbers before you travel to remote areas.</div>
-    <div class="tip"><span class="tip-icon">📍</span> Always share your itinerary with a family member or friend.</div>
-    <div class="tip"><span class="tip-icon">🌧️</span> Check weather alerts before heading to hill areas — landslides are common during monsoon.</div>
-    <div class="tip"><span class="tip-icon">🪪</span> Carry a valid ID and Inner Line Permit (ILP) if required for your destination.</div>
-    <div class="tip"><span class="tip-icon">💊</span> Carry basic medicines — pharmacies can be scarce in remote areas.</div>
-    <div class="tip"><span class="tip-icon">🔋</span> Keep your phone charged and carry a power bank on treks.</div>
+    <h3><i data-lucide="brain"></i> Essential Tourist Safety Protocol</h3>
+    
+    <div class="tip">
+      <div class="tip-icon-box"><i data-lucide="phone"></i></div>
+      <div class="tip-text">Cache crucial local emergency directories onto physical logs or device memory before transiting deep wilderness zones.</div>
+    </div>
+    
+    <div class="tip">
+      <div class="tip-icon-box"><i data-lucide="map-pin"></i></div>
+      <div class="tip-text">Broadcast your detailed itinerary schedules to trusted family nodes or check-in structures regularly.</div>
+    </div>
+    
+    <div class="tip">
+      <div class="tip-icon-box"><i data-lucide="cloud-rain"></i></div>
+      <div class="tip-text">Review real-time climate monitors before scaling montane passes — precipitation frequently triggers extreme landslides.</div>
+    </div>
+    
+    <div class="tip">
+      <div class="tip-icon-box"><i data-lucide="file-text"></i></div>
+      <div class="tip-text">Keep identity files and valid Inner Line Permits (ILP) securely packed inside waterproof containers.</div>
+    </div>
+    
+    <div class="tip">
+      <div class="tip-icon-box"><i data-lucide="heart-pulse"></i></div>
+      <div class="tip-text">Carry customized clinical medical kits — pharmacological supplies can be severely restricted in remote outposts.</div>
+    </div>
+    
+    <div class="tip">
+      <div class="tip-icon-box"><i data-lucide="battery-charging"></i></div>
+      <div class="tip-text">Preserve accumulator charge levels on terminal cells — keep powerbanks primed during trek engagements.</div>
+    </div>
   </div>
 </div>
 
@@ -81,61 +473,67 @@
   import { auth } from './firebase-config.js';
   import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+  // Initializing Lucide Icons
+  lucide.createIcons();
+
   onAuthStateChanged(auth, (user) => {
     if (!user) window.location.href = 'login.html';
   });
 
   // Local emergency contacts database by district
-  // In a real app this would come from Firestore — easily upgradeable
   const contacts = {
     'imphal-east': [
-      { icon: '👮', title: 'Imphal East Police', num: '0385-2450900', note: 'District HQ', tel: '03852450900' },
-      { icon: '🏥', title: 'JNIMS Hospital', num: '0385-2416041', note: 'Emergency ward 24/7', tel: '03852416041' },
-      { icon: '🚒', title: 'Fire Station', num: '101', note: 'Imphal East', tel: '101' },
-      { icon: '🎒', title: 'Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7', tel: '1363' }
+      { icon: 'shield', title: 'Imphal East Police', num: '0385-2450900', note: 'District HQ Office', tel: '03852450900' },
+      { icon: 'heart-pulse', title: 'JNIMS Hospital', num: '0385-2416041', note: 'Emergency Trauma 24/7', tel: '03852416041' },
+      { icon: 'flame', title: 'Fire Station', num: '101', note: 'Imphal East Command', tel: '101' },
+      { icon: 'compass', title: 'National Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7 Support', tel: '1363' }
     ],
     'imphal-west': [
-      { icon: '👮', title: 'Imphal West Police', num: '0385-2220023', note: 'District HQ', tel: '03852220023' },
-      { icon: '🏥', title: 'RIMS Hospital', num: '0385-2411700', note: 'Emergency ward 24/7', tel: '03852411700' },
-      { icon: '🚒', title: 'Fire Station', num: '101', note: 'Imphal West', tel: '101' },
-      { icon: '🎒', title: 'Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7', tel: '1363' }
+      { icon: 'shield', title: 'Imphal West Police', num: '0385-2220023', note: 'District HQ Office', tel: '03852220023' },
+      { icon: 'heart-pulse', title: 'RIMS Hospital', num: '0385-2411700', note: 'Emergency Trauma 24/7', tel: '03852411700' },
+      { icon: 'flame', title: 'Fire Station', num: '101', note: 'Imphal West Command', tel: '101' },
+      { icon: 'compass', title: 'National Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7 Support', tel: '1363' }
     ],
     'churachandpur': [
-      { icon: '👮', title: 'CCpur Police', num: '03874-234567', note: 'District HQ', tel: '03874234567' },
-      { icon: '🏥', title: 'District Hospital', num: '03874-234100', note: 'Emergency 24/7', tel: '03874234100' },
-      { icon: '🚒', title: 'Fire Station', num: '101', note: 'Churachandpur', tel: '101' },
-      { icon: '🎒', title: 'Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7', tel: '1363' }
+      { icon: 'shield', title: 'CCpur District Police', num: '03874-234567', note: 'District HQ Office', tel: '03874234567' },
+      { icon: 'heart-pulse', title: 'District Hospital', num: '03874-234100', note: 'General Ward 24/7', tel: '03874234100' },
+      { icon: 'flame', title: 'Fire Station', num: '101', note: 'Churachandpur Station', tel: '101' },
+      { icon: 'compass', title: 'National Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7 Support', tel: '1363' }
     ],
     'senapati': [
-      { icon: '👮', title: 'Senapati Police', num: '03872-222345', note: 'District HQ', tel: '03872222345' },
-      { icon: '🏥', title: 'District Hospital', num: '03872-222100', note: 'Emergency 24/7', tel: '03872222100' },
-      { icon: '🚒', title: 'Fire Station', num: '101', note: 'Senapati', tel: '101' },
-      { icon: '🎒', title: 'Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7', tel: '1363' }
+      { icon: 'shield', title: 'Senapati District Police', num: '03872-222345', note: 'District HQ Office', tel: '03872222345' },
+      { icon: 'heart-pulse', title: 'District Hospital', num: '03872-222100', note: 'General Ward 24/7', tel: '0387222100' },
+      { icon: 'flame', title: 'Fire Station', num: '101', note: 'Senapati Fire Depot', tel: '101' },
+      { icon: 'compass', title: 'National Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7 Support', tel: '1363' }
     ]
   };
 
   // Default contacts for districts without specific data
   const defaultContacts = [
-    { icon: '👮', title: 'District Police', num: '100', note: 'National police helpline', tel: '100' },
-    { icon: '🏥', title: 'Ambulance', num: '108', note: 'Free emergency ambulance', tel: '108' },
-    { icon: '🚒', title: 'Fire Station', num: '101', note: 'Fire & rescue', tel: '101' },
-    { icon: '🎒', title: 'Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7', tel: '1363' }
+    { icon: 'shield', title: 'District Police', num: '100', note: 'National police network', tel: '100' },
+    { icon: 'heart-pulse', title: 'Ambulance Response', num: '108', note: 'Free medical transit services', tel: '108' },
+    { icon: 'flame', title: 'Fire Station', num: '101', note: 'Fire & emergency rescue', tel: '101' },
+    { icon: 'compass', title: 'National Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7 Support', tel: '1363' }
   ];
 
   window.loadContacts = () => {
     const district = document.getElementById('district-select').value;
     const data = contacts[district] || defaultContacts;
     const grid = document.getElementById('contacts-grid');
+    
     grid.innerHTML = data.map(c => `
       <div class="contact-card">
-        <span class="contact-icon">${c.icon}</span>
-        <div>
+        <div class="contact-icon-box">
+          <i data-lucide="${c.icon}"></i>
+        </div>
+        <div class="contact-info">
           <div class="contact-title">${c.title}</div>
           <div class="contact-num">${c.num}</div>
           <div class="contact-note">${c.note}</div>
-          <a class="call-btn" href="tel:${c.tel}">📞 Call now</a>
+          <a class="call-btn" href="tel:${c.tel}"><i data-lucide="phone" style="width:12px;"></i> Call Now</a>
         </div>
       </div>`).join('');
+      lucide.createIcons();
   };
 
   loadContacts();

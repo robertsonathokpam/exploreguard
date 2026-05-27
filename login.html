@@ -3,31 +3,239 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ExploreGuard — Login</title>
+  <title>ExploreGuard — Sign In</title>
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
+    :root {
+      --primary: #1D9E75;
+      --primary-hover: #157A5A;
+      --primary-light: #e1f5ee;
+      --dark: #0f172a;
+      --dark-muted: #475569;
+      --light: #f8fafc;
+      --white: #ffffff;
+      --border: rgba(255, 255, 255, 0.2);
+      --glass: rgba(255, 255, 255, 0.8);
+      --glass-dark: rgba(15, 23, 42, 0.65);
+      --font: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: #f0faf5; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-    .card { background: #fff; border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 420px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
-    .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 2rem; justify-content: center; }
-    .logo-icon { width: 40px; height: 40px; background: #1D9E75; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; }
-    .logo-text { font-size: 22px; font-weight: 600; color: #1D9E75; }
-    .tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 1.5rem; }
-    .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-size: 15px; color: #888; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
-    .tab.active { color: #1D9E75; border-bottom-color: #1D9E75; font-weight: 500; }
-    .form-group { margin-bottom: 1rem; }
-    label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: 500; }
-    input { width: 100%; padding: 10px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; transition: border 0.2s; }
-    input:focus { border-color: #1D9E75; }
-    .btn { width: 100%; padding: 12px; background: #1D9E75; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer; margin-top: 0.5rem; transition: background 0.2s; }
-    .btn:hover { background: #0F6E56; }
-    .error { color: #c0392b; font-size: 13px; margin-top: 8px; display: none; }
-    .success { color: #1D9E75; font-size: 13px; margin-top: 8px; display: none; }
+    body {
+      font-family: var(--font);
+      background: linear-gradient(rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.5)), url('login_bg.png');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    /* Glassmorphic card design */
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      animation: scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2.25rem;
+      justify-content: center;
+    }
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--primary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(29, 158, 117, 0.3);
+    }
+    .logo-text {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    /* Tab switcher */
+    .tabs {
+      display: flex;
+      background: rgba(15, 23, 42, 0.05);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 2rem;
+    }
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark-muted);
+      border-radius: 8px;
+      transition: all 0.25s ease;
+    }
+    .tab.active {
+      color: var(--primary);
+      background: var(--white);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--dark);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-wrapper i {
+      position: absolute;
+      left: 14px;
+      color: var(--dark-muted);
+      width: 18px;
+      height: 18px;
+      transition: all 0.2s ease;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      border: 1.5px solid rgba(15, 23, 42, 0.1);
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.8);
+      font-family: var(--font);
+      transition: all 0.2s ease;
+    }
+    input:focus {
+      border-color: var(--primary);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(29, 158, 117, 0.1);
+    }
+    input:focus + i {
+      color: var(--primary);
+    }
+
+    /* Accent Actions */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 13px;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+      box-shadow: 0 4px 12px rgba(29, 158, 117, 0.2);
+      transition: all 0.25s ease;
+    }
+    .btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(29, 158, 117, 0.3);
+    }
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    /* Alerts */
+    .error {
+      background: #fdf0f0;
+      color: #c0392b;
+      border: 1px solid rgba(192, 57, 43, 0.15);
+      font-size: 13.5px;
+      margin-top: 1rem;
+      padding: 12px;
+      border-radius: 10px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .success {
+      background: var(--primary-light);
+      color: var(--primary-hover);
+      border: 1px solid rgba(29, 158, 117, 0.15);
+      font-size: 13.5px;
+      margin-top: 1rem;
+      padding: 12px;
+      border-radius: 10px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Back Home Link */
+    .back-home {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 1.5rem;
+      font-size: 14px;
+      color: var(--dark-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .back-home:hover {
+      color: var(--primary);
+    }
+
+    @keyframes scaleUp {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @media(max-width: 480px) {
+      .card {
+        padding: 2.25rem 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
 <div class="card">
   <div class="logo">
-    <div class="logo-icon">🗺</div>
+    <div class="logo-icon">
+      <i data-lucide="map" style="width:22px; height:22px;"></i>
+    </div>
     <span class="logo-text">ExploreGuard</span>
   </div>
 
@@ -36,36 +244,57 @@
     <div class="tab" onclick="showTab('signup')">Sign Up</div>
   </div>
 
+  <!-- Sign In Form -->
   <div id="login-form">
     <div class="form-group">
-      <label>Email</label>
-      <input type="email" id="login-email" placeholder="you@email.com"/>
+      <label>Email Address</label>
+      <div class="input-wrapper">
+        <input type="email" id="login-email" placeholder="you@email.com" required/>
+        <i data-lucide="mail"></i>
+      </div>
     </div>
     <div class="form-group">
       <label>Password</label>
-      <input type="password" id="login-password" placeholder="Your password"/>
+      <div class="input-wrapper">
+        <input type="password" id="login-password" placeholder="Your password" required/>
+        <i data-lucide="lock"></i>
+      </div>
     </div>
-    <button class="btn" onclick="loginUser()">Sign In</button>
-    <div class="error" id="login-error"></div>
+    <button class="btn" onclick="loginUser()">Sign In <i data-lucide="log-in" style="width:18px;"></i></button>
+    <div class="error" id="login-error"><i data-lucide="alert-circle" style="width:16px;"></i> <span id="login-err-text"></span></div>
   </div>
 
+  <!-- Sign Up Form -->
   <div id="signup-form" style="display:none">
     <div class="form-group">
       <label>Full Name</label>
-      <input type="text" id="signup-name" placeholder="Your full name"/>
+      <div class="input-wrapper">
+        <input type="text" id="signup-name" placeholder="Your full name" required/>
+        <i data-lucide="user"></i>
+      </div>
     </div>
     <div class="form-group">
-      <label>Email</label>
-      <input type="email" id="signup-email" placeholder="you@email.com"/>
+      <label>Email Address</label>
+      <div class="input-wrapper">
+        <input type="email" id="signup-email" placeholder="you@email.com" required/>
+        <i data-lucide="mail"></i>
+      </div>
     </div>
     <div class="form-group">
       <label>Password</label>
-      <input type="password" id="signup-password" placeholder="Min 6 characters"/>
+      <div class="input-wrapper">
+        <input type="password" id="signup-password" placeholder="Min 6 characters" required/>
+        <i data-lucide="lock"></i>
+      </div>
     </div>
-    <button class="btn" onclick="signupUser()">Create Account</button>
-    <div class="error" id="signup-error"></div>
-    <div class="success" id="signup-success"></div>
+    <button class="btn" onclick="signupUser()">Create Account <i data-lucide="user-plus" style="width:18px;"></i></button>
+    <div class="error" id="signup-error"><i data-lucide="alert-circle" style="width:16px;"></i> <span id="signup-err-text"></span></div>
+    <div class="success" id="signup-success"><i data-lucide="check-circle" style="width:16px;"></i> <span id="signup-suc-text"></span></div>
   </div>
+
+  <a class="back-home" href="index.html">
+    <i data-lucide="arrow-left" style="width:16px; height:16px;"></i> Back to Landing Page
+  </a>
 </div>
 
 <script type="module">
@@ -73,7 +302,10 @@
   import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  // If already logged in, go straight to dashboard
+  // Render Lucide Icons
+  lucide.createIcons();
+
+  // If already logged in, redirect straight to dashboard
   onAuthStateChanged(auth, (user) => {
     if (user) window.location.href = 'dashboard.html';
   });
@@ -83,42 +315,75 @@
     document.querySelectorAll('.tab')[tab === 'login' ? 0 : 1].classList.add('active');
     document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
     document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
+    
+    // Hide error messages when switching tabs
+    document.getElementById('login-error').style.display = 'none';
+    document.getElementById('signup-error').style.display = 'none';
+    document.getElementById('signup-success').style.display = 'none';
   };
 
   window.loginUser = async () => {
-    const email = document.getElementById('login-email').value;
+    const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
     const errEl = document.getElementById('login-error');
+    const errText = document.getElementById('login-err-text');
+    
+    if (!email || !password) {
+      errText.textContent = 'Please fill in all fields.';
+      errEl.style.display = 'flex';
+      return;
+    }
+
     try {
+      errEl.style.display = 'none';
       await signInWithEmailAndPassword(auth, email, password);
       window.location.href = 'dashboard.html';
     } catch (e) {
-      errEl.textContent = 'Invalid email or password. Please try again.';
-      errEl.style.display = 'block';
+      errText.textContent = 'Invalid email or password. Please try again.';
+      errEl.style.display = 'flex';
     }
   };
 
   window.signupUser = async () => {
-    const name = document.getElementById('signup-name').value;
-    const email = document.getElementById('signup-email').value;
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
     const password = document.getElementById('signup-password').value;
     const errEl = document.getElementById('signup-error');
+    const errText = document.getElementById('signup-err-text');
     const sucEl = document.getElementById('signup-success');
+    const sucText = document.getElementById('signup-suc-text');
+    
+    if (!name || !email || !password) {
+      errText.textContent = 'Please fill in all fields.';
+      errEl.style.display = 'flex';
+      return;
+    }
+
+    if (password.length < 6) {
+      errText.textContent = 'Password must be at least 6 characters long.';
+      errEl.style.display = 'flex';
+      return;
+    }
+
     try {
+      errEl.style.display = 'none';
+      sucEl.style.display = 'none';
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: name });
-      // Save user profile to Firestore database (CREATE operation)
+      
+      // Save user profile to Firestore (CREATE operation)
       await setDoc(doc(db, 'users', cred.user.uid), {
         name: name,
         email: email,
         createdAt: new Date().toISOString()
       });
-      sucEl.textContent = 'Account created! Redirecting...';
-      sucEl.style.display = 'block';
-      setTimeout(() => window.location.href = 'dashboard.html', 1500);
+      
+      sucText.textContent = 'Account created successfully! Redirecting...';
+      sucEl.style.display = 'flex';
+      setTimeout(() => window.location.href = 'dashboard.html', 1200);
     } catch (e) {
-      errEl.textContent = e.message;
-      errEl.style.display = 'block';
+      errText.textContent = e.message.replace('Firebase: ', '');
+      errEl.style.display = 'flex';
     }
   };
 </script>
