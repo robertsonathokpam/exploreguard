@@ -1,0 +1,99 @@
+import { auth, db } from '../firebase-config.js';
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { collection, query, where, getDocs, deleteDoc, doc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// Initializing Lucide Icons
+lucide.createIcons();
+
+let currentUser = null;
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  currentUser = user;
+  document.getElementById('user-name').textContent = user.displayName || user.email;
+  document.getElementById('welcome-msg').textContent = `Welcome back, ${user.displayName || 'Traveler'}!`;
+  loadBookings(user.uid);
+});
+
+// READ operation — fetch all bookings from Firestore for this user
+async function loadBookings(uid) {
+  const list = document.getElementById('bookings-list');
+  try {
+    const q = query(collection(db, 'bookings'), where('userId', '==', uid), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      list.innerHTML = `
+        <div class="empty">
+          <i data-lucide="calendar" style="width:36px; height:36px; stroke-width:1.5px; opacity:0.6;"></i>
+          <span>No bookings found. Ready to start your adventure?</span>
+          <a href="booking.html">Book your first trip now &rarr;</a>
+        </div>`;
+      lucide.createIcons();
+      return;
+    }
+    list.innerHTML = '';
+    snap.forEach(docSnap => {
+      const b = docSnap.data();
+      const type = b.type || 'Flight';
+      
+      let typeBadgeClass = 'badge-flight';
+      let typeIcon = 'plane';
+      if (type === 'Railway') {
+        typeBadgeClass = 'badge-railway';
+        typeIcon = 'train';
+      } else if (type === 'Cab') {
+        typeBadgeClass = 'badge-cab';
+        typeIcon = 'car';
+      }
+      
+      list.innerHTML += `
+        <div class="booking-item">
+          <div class="booking-info">
+            <div class="info-type-box">
+              <span class="booking-badge ${typeBadgeClass}">
+                <i data-lucide="${typeIcon}" style="width:12px; height:12px; display:inline;"></i> ${type}
+              </span>
+            </div>
+            <div class="route-display">
+              <span>${b.from}</span>
+              <i data-lucide="arrow-right" style="width:16px;"></i>
+              <span>${b.to}</span>
+            </div>
+            <div class="booking-details-meta">
+              <span><i data-lucide="calendar" style="width:14px;"></i> ${b.date}</span>
+              <span><i data-lucide="users" style="width:14px;"></i> ${b.passengers} traveler(s)</span>
+              ${b.notes ? `<span><i data-lucide="message-square" style="width:14px;"></i> ${b.notes}</span>` : ''}
+            </div>
+          </div>
+          <button class="cancel-btn" onclick="cancelBooking('${docSnap.id}')">
+            <i data-lucide="trash-2" style="width:14px;"></i> Cancel
+          </button>
+        </div>`;
+    });
+    // Re-trigger icon rendering
+    lucide.createIcons();
+  } catch (e) {
+    list.innerHTML = `
+      <div class="empty">
+        <i data-lucide="alert-triangle" style="color:var(--danger); width:36px; height:36px;"></i>
+        <span>Failed to load active bookings. Please refresh.</span>
+      </div>`;
+    lucide.createIcons();
+  }
+}
+
+// DELETE operation — remove booking from Firestore
+window.cancelBooking = async (bookingId) => {
+  if (!confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) return;
+  try {
+    await deleteDoc(doc(db, 'bookings', bookingId));
+    loadBookings(currentUser.uid);
+  } catch (e) {
+    alert('Cancellation failed. Please try again.');
+  }
+};
+
+window.logoutUser = async () => {
+  await signOut(auth);
+  window.location.href = 'login.html';
+};

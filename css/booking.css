@@ -1,0 +1,208 @@
+/* Booking Desk Page Styles */
+
+body {
+  background: linear-gradient(135deg, rgba(240, 250, 245, 0.93), rgba(225, 245, 238, 0.93)), url('../travel_bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: var(--dark);
+}
+
+/* Layout */
+.container {
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  animation: fadeInDown 0.5s ease;
+}
+
+h2 {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 800;
+  color: var(--dark);
+  letter-spacing: -1.5px;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  color: var(--dark-muted);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Custom Booking Tab Buttons */
+.tabs {
+  display: flex;
+  background: rgba(15, 23, 42, 0.05);
+  padding: 6px;
+  border-radius: 16px;
+  margin-bottom: 1.75rem;
+  gap: 4px;
+  animation: fadeInUp 0.5s ease;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14.5px;
+  font-weight: 700;
+  border: none;
+  color: var(--dark-muted);
+  background: transparent;
+  transition: all 0.25s ease;
+}
+
+.tab.active {
+  background: var(--white);
+  color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.tab i {
+  width: 18px;
+  height: 18px;
+}
+
+/* Ticket Booking Form */
+.form-card {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px;
+  padding: 2.5rem 2.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-lg);
+  animation: fadeInUp 0.6s ease;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 12.5px;
+  color: var(--dark);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper i {
+  position: absolute;
+  left: 14px;
+  color: var(--dark-muted);
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  border: 1.5px solid rgba(15, 23, 42, 0.1);
+  border-radius: 12px;
+  font-size: 14.5px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.8);
+  font-family: var(--font);
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus {
+  border-color: var(--primary);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(29, 158, 117, 0.08);
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+}
+
+/* Submit button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1rem;
+  box-shadow: 0 4px 14px rgba(29, 158, 117, 0.2);
+  transition: all 0.25s ease;
+}
+
+.btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(29, 158, 117, 0.3);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Premium success animation alert */
+.success-msg {
+  display: none;
+  background: var(--primary-light);
+  color: var(--primary-hover);
+  border: 1px solid rgba(29, 158, 117, 0.2);
+  padding: 16px;
+  border-radius: 12px;
+  margin-top: 1.5rem;
+  font-size: 14.5px;
+  font-weight: 600;
+  align-items: center;
+  gap: 10px;
+  animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@media(max-width:580px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .form-card {
+    padding: 2rem 1.5rem;
+  }
+}

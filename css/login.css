@@ -1,0 +1,211 @@
+/* Sign In / Sign Up Styles */
+
+body {
+  background: linear-gradient(rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.5)), url('../login_bg.png');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+/* Glassmorphic card design */
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  animation: scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2.25rem;
+  justify-content: center;
+}
+
+.logo-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(29, 158, 117, 0.3);
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+}
+
+/* Tab switcher */
+.tabs {
+  display: flex;
+  background: rgba(15, 23, 42, 0.05);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 2rem;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dark-muted);
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.tab.active {
+  color: var(--primary);
+  background: var(--white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Form Fields */
+.form-group {
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  color: var(--dark);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper i {
+  position: absolute;
+  left: 14px;
+  color: var(--dark-muted);
+  width: 18px;
+  height: 18px;
+  transition: all 0.2s ease;
+}
+
+input {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  border: 1.5px solid rgba(15, 23, 42, 0.1);
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.8);
+  font-family: var(--font);
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  border-color: var(--primary);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(29, 158, 117, 0.1);
+}
+
+input:focus + i {
+  color: var(--primary);
+}
+
+/* Accent Actions */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  box-shadow: 0 4px 12px rgba(29, 158, 117, 0.2);
+  transition: all 0.25s ease;
+}
+
+.btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(29, 158, 117, 0.3);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Alerts */
+.error {
+  background: #fdf0f0;
+  color: #c0392b;
+  border: 1px solid rgba(192, 57, 43, 0.15);
+  font-size: 13.5px;
+  margin-top: 1rem;
+  padding: 12px;
+  border-radius: 10px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.success {
+  background: var(--primary-light);
+  color: var(--primary-hover);
+  border: 1px solid rgba(29, 158, 117, 0.15);
+  font-size: 13.5px;
+  margin-top: 1rem;
+  padding: 12px;
+  border-radius: 10px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Back Home Link */
+.back-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 1.5rem;
+  font-size: 14px;
+  color: var(--dark-muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.back-home:hover {
+  color: var(--primary);
+}
+
+@media(max-width: 480px) {
+  .card {
+    padding: 2.25rem 1.5rem;
+  }
+}
