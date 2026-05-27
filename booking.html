@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ExploreGuard — Book Transport</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #f0faf5; min-height: 100vh; }
+    nav { background: #fff; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0; }
+    .nav-logo { font-size: 20px; font-weight: 600; color: #1D9E75; text-decoration: none; }
+    .back-btn { padding: 7px 16px; background: transparent; border: 1.5px solid #1D9E75; color: #1D9E75; border-radius: 8px; cursor: pointer; font-size: 14px; text-decoration: none; }
+    .container { max-width: 700px; margin: 2rem auto; padding: 0 1rem; }
+    h2 { font-size: 24px; color: #1a1a1a; margin-bottom: 0.3rem; }
+    .subtitle { color: #666; font-size: 15px; margin-bottom: 2rem; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab { padding: 9px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; border: 1.5px solid #ddd; color: #555; background: #fff; transition: all 0.2s; }
+    .tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+    .form-card { background: #fff; border-radius: 14px; padding: 1.5rem; border: 1px solid #e8e8e8; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    label { font-size: 13px; color: #555; font-weight: 500; }
+    input, select { padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; }
+    input:focus, select:focus { border-color: #1D9E75; }
+    .btn { width: 100%; padding: 12px; background: #1D9E75; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer; margin-top: 0.5rem; }
+    .btn:hover { background: #0F6E56; }
+    .success-msg { display: none; background: #e1f5ee; color: #0F6E56; padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 14px; }
+    @media(max-width:500px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<nav>
+  <span class="nav-logo">🗺 ExploreGuard</span>
+  <a class="back-btn" href="dashboard.html">← Dashboard</a>
+</nav>
+
+<div class="container">
+  <h2>Book Transport</h2>
+  <p class="subtitle">Choose your travel mode and book instantly</p>
+
+  <div class="tabs">
+    <div class="tab active" onclick="setType('Flight', this)">✈️ Flight</div>
+    <div class="tab" onclick="setType('Railway', this)">🚂 Railway</div>
+    <div class="tab" onclick="setType('Cab', this)">🚕 Cab</div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>FROM</label>
+        <input type="text" id="from" placeholder="e.g. Imphal"/>
+      </div>
+      <div class="form-group">
+        <label>TO</label>
+        <input type="text" id="to" placeholder="e.g. Delhi"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>DATE</label>
+        <input type="date" id="date"/>
+      </div>
+      <div class="form-group">
+        <label>PASSENGERS</label>
+        <select id="passengers">
+          <option value="1">1 Passenger</option>
+          <option value="2">2 Passengers</option>
+          <option value="3">3 Passengers</option>
+          <option value="4">4+ Passengers</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label>SPECIAL REQUESTS (optional)</label>
+      <input type="text" id="notes" placeholder="e.g. Window seat, wheelchair access"/>
+    </div>
+    <button class="btn" onclick="saveBooking()">Confirm Booking</button>
+    <div class="success-msg" id="success-msg">✅ Booking confirmed! View it on your dashboard.</div>
+  </div>
+</div>
+
+<script type="module">
+  import { auth, db } from './firebase-config.js';
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  let currentUser = null;
+  let selectedType = 'Flight';
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
+    document.getElementById('date').min = new Date().toISOString().split('T')[0];
+  });
+
+  window.setType = (type, el) => {
+    selectedType = type;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  };
+
+  // CREATE operation — save new booking to Firestore
+  window.saveBooking = async () => {
+    const from = document.getElementById('from').value.trim();
+    const to = document.getElementById('to').value.trim();
+    const date = document.getElementById('date').value;
+    const passengers = document.getElementById('passengers').value;
+    const notes = document.getElementById('notes').value.trim();
+
+    if (!from || !to || !date) { alert('Please fill in From, To, and Date.'); return; }
+
+    try {
+      await addDoc(collection(db, 'bookings'), {
+        userId: currentUser.uid,
+        type: selectedType,
+        from, to, date, passengers, notes,
+        createdAt: new Date().toISOString()
+      });
+      document.getElementById('success-msg').style.display = 'block';
+      document.getElementById('from').value = '';
+      document.getElementById('to').value = '';
+      document.getElementById('date').value = '';
+      document.getElementById('notes').value = '';
+    } catch (e) {
+      alert('Booking failed. Please try again.');
+    }
+  };
+</script>
+</body>
+</html>

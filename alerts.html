@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ExploreGuard — Weather Alerts</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #f0faf5; min-height: 100vh; }
+    nav { background: #fff; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0; }
+    .nav-logo { font-size: 20px; font-weight: 600; color: #1D9E75; }
+    .back-btn { padding: 7px 16px; background: transparent; border: 1.5px solid #1D9E75; color: #1D9E75; border-radius: 8px; cursor: pointer; font-size: 14px; text-decoration: none; }
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    h2 { font-size: 24px; color: #1a1a1a; margin-bottom: 0.3rem; }
+    .subtitle { color: #666; font-size: 15px; margin-bottom: 2rem; }
+    .search-row { display: flex; gap: 10px; margin-bottom: 2rem; }
+    .search-row input { flex: 1; padding: 10px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; }
+    .search-row input:focus { border-color: #1D9E75; }
+    .search-btn { padding: 10px 20px; background: #1D9E75; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; }
+    .weather-card { background: #fff; border-radius: 14px; padding: 1.5rem; border: 1px solid #e8e8e8; margin-bottom: 16px; }
+    .weather-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .city-name { font-size: 22px; font-weight: 600; color: #1a1a1a; }
+    .temp { font-size: 40px; font-weight: 600; color: #1D9E75; }
+    .condition { font-size: 16px; color: #555; margin-top: 6px; text-transform: capitalize; }
+    .weather-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f0f0f0; }
+    .detail-item { text-align: center; }
+    .detail-val { font-size: 18px; font-weight: 600; color: #1a1a1a; }
+    .detail-key { font-size: 12px; color: #888; margin-top: 2px; }
+    .alert-box { border-radius: 10px; padding: 12px 16px; margin-top: 12px; font-size: 14px; }
+    .alert-safe { background: #e1f5ee; color: #0F6E56; }
+    .alert-warn { background: #fef9e7; color: #b7770d; }
+    .alert-danger { background: #fdf0f0; color: #c0392b; }
+    .cities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 2rem; }
+    .city-chip { padding: 8px 16px; background: #fff; border: 1.5px solid #ddd; border-radius: 20px; cursor: pointer; font-size: 14px; text-align: center; transition: all 0.2s; }
+    .city-chip:hover { border-color: #1D9E75; color: #1D9E75; }
+    .loading { text-align: center; color: #888; padding: 2rem; }
+  </style>
+</head>
+<body>
+<nav>
+  <span class="nav-logo">🗺 ExploreGuard</span>
+  <a class="back-btn" href="dashboard.html">← Dashboard</a>
+</nav>
+
+<div class="container">
+  <h2>⛈️ Weather & Safety Alerts</h2>
+  <p class="subtitle">Live weather data for tourist destinations in Northeast India</p>
+
+  <div class="search-row">
+    <input type="text" id="city-input" placeholder="Search any city e.g. Imphal, Shillong..." onkeydown="if(event.key==='Enter') searchCity()"/>
+    <button class="search-btn" onclick="searchCity()">Search</button>
+  </div>
+
+  <div class="cities-grid">
+    <div class="city-chip" onclick="fetchWeather('Imphal')">📍 Imphal</div>
+    <div class="city-chip" onclick="fetchWeather('Shillong')">📍 Shillong</div>
+    <div class="city-chip" onclick="fetchWeather('Kohima')">📍 Kohima</div>
+    <div class="city-chip" onclick="fetchWeather('Agartala')">📍 Agartala</div>
+    <div class="city-chip" onclick="fetchWeather('Guwahati')">📍 Guwahati</div>
+    <div class="city-chip" onclick="fetchWeather('Aizawl')">📍 Aizawl</div>
+  </div>
+
+  <div id="weather-result"><div class="loading">Select a city or search to see live weather</div></div>
+</div>
+
+<script type="module">
+  import { auth } from './firebase-config.js';
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) window.location.href = 'login.html';
+  });
+
+  // OpenWeatherMap free API key — sign up free at openweathermap.org
+  // Replace this with your own free API key
+  const API_KEY = '6a021b2cbb192d2064328037610164a9';
+
+  window.searchCity = () => {
+    const city = document.getElementById('city-input').value.trim();
+    if (city) fetchWeather(city);
+  };
+
+  window.fetchWeather = async (city) => {
+    const result = document.getElementById('weather-result');
+    result.innerHTML = '<div class="loading">Fetching live weather data...</div>';
+    try {
+      const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city},IN&appid=${API_KEY}&units=metric`);
+      if (!res.ok) throw new Error('City not found');
+      const data = await res.json();
+
+      const temp = Math.round(data.main.temp);
+      const humidity = data.main.humidity;
+      const wind = Math.round(data.wind.speed * 3.6); // m/s to km/h
+      const condition = data.weather[0].description;
+      const visibility = data.visibility ? Math.round(data.visibility / 1000) : 'N/A';
+
+      // Safety alert logic based on weather conditions
+      let alertClass = 'alert-safe';
+      let alertMsg = '✅ Weather looks safe for travel.';
+      if (data.weather[0].main === 'Thunderstorm') {
+        alertClass = 'alert-danger';
+        alertMsg = '🚨 Thunderstorm warning! Avoid travel, seek shelter immediately.';
+      } else if (data.weather[0].main === 'Rain' && data.rain && data.rain['1h'] > 10) {
+        alertClass = 'alert-warn';
+        alertMsg = '⚠️ Heavy rain. Landslide risk on mountain roads. Travel with caution.';
+      } else if (wind > 50) {
+        alertClass = 'alert-warn';
+        alertMsg = '⚠️ Strong winds. Take care on open roads and mountain passes.';
+      } else if (data.weather[0].main === 'Fog' || visibility < 1) {
+        alertClass = 'alert-warn';
+        alertMsg = '⚠️ Low visibility due to fog. Drive slowly and use fog lights.';
+      }
+
+      result.innerHTML = `
+        <div class="weather-card">
+          <div class="weather-top">
+            <div>
+              <div class="city-name">📍 ${data.name}, ${data.sys.country}</div>
+              <div class="condition">${condition}</div>
+            </div>
+            <div class="temp">${temp}°C</div>
+          </div>
+          <div class="weather-details">
+            <div class="detail-item"><div class="detail-val">${humidity}%</div><div class="detail-key">Humidity</div></div>
+            <div class="detail-item"><div class="detail-val">${wind} km/h</div><div class="detail-key">Wind speed</div></div>
+            <div class="detail-item"><div class="detail-val">${visibility} km</div><div class="detail-key">Visibility</div></div>
+            <div class="detail-item"><div class="detail-val">${Math.round(data.main.feels_like)}°C</div><div class="detail-key">Feels like</div></div>
+          </div>
+          <div class="alert-box ${alertClass}">${alertMsg}</div>
+        </div>`;
+    } catch (e) {
+      result.innerHTML = `<div class="weather-card"><p style="color:#c0392b">Could not fetch weather. Check city name or API key.</p></div>`;
+    }
+  };
+
+  // Auto load Imphal weather on page open
+  fetchWeather('Imphal');
+</script>
+</body>
+</html>

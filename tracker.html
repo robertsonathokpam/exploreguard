@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ExploreGuard — Location Tracker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #f0faf5; min-height: 100vh; }
+    nav { background: #fff; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0; }
+    .nav-logo { font-size: 20px; font-weight: 600; color: #1D9E75; }
+    .back-btn { padding: 7px 16px; background: transparent; border: 1.5px solid #1D9E75; color: #1D9E75; border-radius: 8px; font-size: 14px; text-decoration: none; }
+    .container { max-width: 700px; margin: 2rem auto; padding: 0 1rem; }
+    h2 { font-size: 24px; color: #1a1a1a; margin-bottom: 0.3rem; }
+    .subtitle { color: #666; font-size: 15px; margin-bottom: 2rem; }
+    .card { background: #fff; border-radius: 14px; padding: 1.5rem; border: 1px solid #e8e8e8; margin-bottom: 16px; }
+    .consent-box { background: #fff8e1; border: 1.5px solid #f9ca24; border-radius: 10px; padding: 14px; margin-bottom: 1.5rem; font-size: 14px; color: #7d6608; }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .toggle-label { font-size: 16px; font-weight: 500; color: #1a1a1a; }
+    .toggle { position: relative; width: 50px; height: 26px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; inset: 0; background: #ccc; border-radius: 26px; cursor: pointer; transition: 0.3s; }
+    .slider:before { content: ''; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+    input:checked + .slider { background: #1D9E75; }
+    input:checked + .slider:before { transform: translateX(24px); }
+    .location-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 1rem 0; }
+    .info-box { background: #f8f8f8; border-radius: 8px; padding: 12px; text-align: center; }
+    .info-val { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+    .info-key { font-size: 12px; color: #888; margin-top: 3px; }
+    .share-link-box { background: #e1f5ee; border-radius: 10px; padding: 14px; margin-top: 12px; }
+    .share-link-box p { font-size: 13px; color: #0F6E56; margin-bottom: 8px; }
+    .link-row { display: flex; gap: 8px; }
+    .link-row input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; }
+    .copy-btn { padding: 8px 14px; background: #1D9E75; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    .status { font-size: 14px; color: #888; margin-top: 8px; }
+    .status.active { color: #1D9E75; }
+    .status.error { color: #e74c3c; }
+    #map-frame { width: 100%; height: 300px; border-radius: 10px; border: none; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+<nav>
+  <span class="nav-logo">🗺 ExploreGuard</span>
+  <a class="back-btn" href="dashboard.html">← Dashboard</a>
+</nav>
+
+<div class="container">
+  <h2>📍 Location Tracker</h2>
+  <p class="subtitle">Share your live location with trusted contacts — with your consent only</p>
+
+  <div class="consent-box">
+    🔒 <strong>Privacy first:</strong> Your location is only shared when you turn on the toggle below. You can stop sharing at any time. We never track you without permission.
+  </div>
+
+  <div class="card">
+    <div class="toggle-row">
+      <span class="toggle-label">Share my location</span>
+      <label class="toggle">
+        <input type="checkbox" id="share-toggle" onchange="toggleSharing()"/>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="location-info">
+      <div class="info-box">
+        <div class="info-val" id="lat-val">--</div>
+        <div class="info-key">Latitude</div>
+      </div>
+      <div class="info-box">
+        <div class="info-val" id="lng-val">--</div>
+        <div class="info-key">Longitude</div>
+      </div>
+      <div class="info-box">
+        <div class="info-val" id="accuracy-val">--</div>
+        <div class="info-key">Accuracy</div>
+      </div>
+      <div class="info-box">
+        <div class="info-val" id="updated-val">--</div>
+        <div class="info-key">Last updated</div>
+      </div>
+    </div>
+
+    <p class="status" id="status-msg">Toggle on to start sharing your location</p>
+
+    <div class="share-link-box" id="share-link-box" style="display:none">
+      <p>Share this link with your trusted contact to let them see your location:</p>
+      <div class="link-row">
+        <input type="text" id="share-link" readonly/>
+        <button class="copy-btn" onclick="copyLink()">Copy</button>
+      </div>
+    </div>
+
+    <iframe id="map-frame" style="display:none"></iframe>
+  </div>
+</div>
+
+<script type="module">
+  import { auth, db } from './firebase-config.js';
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  let currentUser = null;
+  let watchId = null;
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
+    const link = `${window.location.origin}/view-location.html?uid=${user.uid}`;
+    document.getElementById('share-link').value = link;
+  });
+
+  window.toggleSharing = async () => {
+    const isOn = document.getElementById('share-toggle').checked;
+    const status = document.getElementById('status-msg');
+
+    if (isOn) {
+      status.textContent = 'Requesting location access...';
+      status.className = 'status';
+      if (!navigator.geolocation) {
+        status.textContent = 'GPS not supported on this device.';
+        status.className = 'status error';
+        return;
+      }
+      // Start watching GPS position — updates every time you move
+      watchId = navigator.geolocation.watchPosition(
+        async (pos) => {
+          const { latitude, longitude, accuracy } = pos.coords;
+          document.getElementById('lat-val').textContent = latitude.toFixed(5);
+          document.getElementById('lng-val').textContent = longitude.toFixed(5);
+          document.getElementById('accuracy-val').textContent = Math.round(accuracy) + 'm';
+          document.getElementById('updated-val').textContent = new Date().toLocaleTimeString();
+          status.textContent = '🟢 Sharing live — contacts can see your location';
+          status.className = 'status active';
+          document.getElementById('share-link-box').style.display = 'block';
+
+          // Show map
+          const mapFrame = document.getElementById('map-frame');
+          mapFrame.src = `https://maps.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
+          mapFrame.style.display = 'block';
+
+          // UPDATE operation — save/update location in Firestore
+          if (currentUser) {
+            await setDoc(doc(db, 'locations', currentUser.uid), {
+              uid: currentUser.uid,
+              name: currentUser.displayName || 'Traveller',
+              latitude, longitude, accuracy,
+              updatedAt: new Date().toISOString(),
+              sharing: true
+            });
+          }
+        },
+        (err) => {
+          status.textContent = 'Location access denied. Please allow in browser settings.';
+          status.className = 'status error';
+          document.getElementById('share-toggle').checked = false;
+        },
+        { enableHighAccuracy: true, maximumAge: 10000 }
+      );
+    } else {
+      // Stop sharing — DELETE location from Firestore
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+      if (currentUser) await deleteDoc(doc(db, 'locations', currentUser.uid));
+      status.textContent = '⭕ Sharing stopped. Your location is no longer visible.';
+      status.className = 'status';
+      document.getElementById('share-link-box').style.display = 'none';
+      document.getElementById('map-frame').style.display = 'none';
+      document.getElementById('lat-val').textContent = '--';
+      document.getElementById('lng-val').textContent = '--';
+    }
+  };
+
+  window.copyLink = () => {
+    navigator.clipboard.writeText(document.getElementById('share-link').value);
+    document.querySelector('.copy-btn').textContent = 'Copied!';
+    setTimeout(() => document.querySelector('.copy-btn').textContent = 'Copy', 2000);
+  };
+</script>
+</body>
+</html>

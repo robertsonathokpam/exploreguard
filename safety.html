@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ExploreGuard — Safety</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #f0faf5; min-height: 100vh; }
+    nav { background: #fff; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0; }
+    .nav-logo { font-size: 20px; font-weight: 600; color: #1D9E75; }
+    .back-btn { padding: 7px 16px; background: transparent; border: 1.5px solid #1D9E75; color: #1D9E75; border-radius: 8px; font-size: 14px; text-decoration: none; }
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    h2 { font-size: 24px; color: #1a1a1a; margin-bottom: 0.3rem; }
+    .subtitle { color: #666; font-size: 15px; margin-bottom: 2rem; }
+    .district-row { display: flex; gap: 10px; margin-bottom: 2rem; flex-wrap: wrap; }
+    .district-row label { font-size: 14px; color: #555; font-weight: 500; align-self: center; }
+    .district-row select { padding: 9px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; flex: 1; max-width: 300px; }
+    .district-row select:focus { border-color: #1D9E75; }
+    .contacts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 2rem; }
+    .contact-card { background: #fff; border-radius: 12px; padding: 1.25rem; border: 1px solid #e8e8e8; display: flex; align-items: flex-start; gap: 12px; }
+    .contact-icon { font-size: 28px; flex-shrink: 0; }
+    .contact-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; }
+    .contact-num { font-size: 22px; font-weight: 700; color: #1D9E75; }
+    .contact-note { font-size: 12px; color: #888; margin-top: 3px; }
+    .call-btn { display: inline-block; margin-top: 6px; padding: 5px 12px; background: #e1f5ee; color: #0F6E56; border-radius: 6px; font-size: 13px; text-decoration: none; font-weight: 500; }
+    .sos-card { background: #c0392b; border-radius: 14px; padding: 1.5rem; color: #fff; text-align: center; margin-bottom: 2rem; }
+    .sos-card h3 { font-size: 20px; margin-bottom: 6px; }
+    .sos-card p { font-size: 14px; opacity: 0.85; margin-bottom: 1rem; }
+    .sos-btn { display: inline-block; padding: 12px 32px; background: #fff; color: #c0392b; border-radius: 8px; font-size: 16px; font-weight: 700; text-decoration: none; }
+    .tips-card { background: #fff; border-radius: 14px; padding: 1.5rem; border: 1px solid #e8e8e8; }
+    .tips-card h3 { font-size: 18px; margin-bottom: 1rem; color: #1a1a1a; }
+    .tip { display: flex; gap: 10px; margin-bottom: 10px; font-size: 14px; color: #444; }
+    .tip-icon { font-size: 18px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+<nav>
+  <span class="nav-logo">🗺 ExploreGuard</span>
+  <a class="back-btn" href="dashboard.html">← Dashboard</a>
+</nav>
+
+<div class="container">
+  <h2>🛡️ Safety & Emergency Contacts</h2>
+  <p class="subtitle">Select your district to see local emergency numbers</p>
+
+  <div class="sos-card">
+    <h3>🚨 Emergency SOS</h3>
+    <p>In immediate danger? Call the national emergency helpline instantly.</p>
+    <a class="sos-btn" href="tel:112">📞 Call 112 — National Emergency</a>
+  </div>
+
+  <div class="district-row">
+    <label>Your district:</label>
+    <select id="district-select" onchange="loadContacts()">
+      <option value="imphal-east">Imphal East</option>
+      <option value="imphal-west">Imphal West</option>
+      <option value="thoubal">Thoubal</option>
+      <option value="bishnupur">Bishnupur</option>
+      <option value="churachandpur">Churachandpur</option>
+      <option value="senapati">Senapati</option>
+      <option value="ukhrul">Ukhrul</option>
+      <option value="chandel">Chandel</option>
+    </select>
+  </div>
+
+  <div class="contacts-grid" id="contacts-grid"></div>
+
+  <div class="tips-card">
+    <h3>🧠 Tourist Safety Tips</h3>
+    <div class="tip"><span class="tip-icon">📱</span> Save local emergency numbers before you travel to remote areas.</div>
+    <div class="tip"><span class="tip-icon">📍</span> Always share your itinerary with a family member or friend.</div>
+    <div class="tip"><span class="tip-icon">🌧️</span> Check weather alerts before heading to hill areas — landslides are common during monsoon.</div>
+    <div class="tip"><span class="tip-icon">🪪</span> Carry a valid ID and Inner Line Permit (ILP) if required for your destination.</div>
+    <div class="tip"><span class="tip-icon">💊</span> Carry basic medicines — pharmacies can be scarce in remote areas.</div>
+    <div class="tip"><span class="tip-icon">🔋</span> Keep your phone charged and carry a power bank on treks.</div>
+  </div>
+</div>
+
+<script type="module">
+  import { auth } from './firebase-config.js';
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) window.location.href = 'login.html';
+  });
+
+  // Local emergency contacts database by district
+  // In a real app this would come from Firestore — easily upgradeable
+  const contacts = {
+    'imphal-east': [
+      { icon: '👮', title: 'Imphal East Police', num: '0385-2450900', note: 'District HQ', tel: '03852450900' },
+      { icon: '🏥', title: 'JNIMS Hospital', num: '0385-2416041', note: 'Emergency ward 24/7', tel: '03852416041' },
+      { icon: '🚒', title: 'Fire Station', num: '101', note: 'Imphal East', tel: '101' },
+      { icon: '🎒', title: 'Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7', tel: '1363' }
+    ],
+    'imphal-west': [
+      { icon: '👮', title: 'Imphal West Police', num: '0385-2220023', note: 'District HQ', tel: '03852220023' },
+      { icon: '🏥', title: 'RIMS Hospital', num: '0385-2411700', note: 'Emergency ward 24/7', tel: '03852411700' },
+      { icon: '🚒', title: 'Fire Station', num: '101', note: 'Imphal West', tel: '101' },
+      { icon: '🎒', title: 'Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7', tel: '1363' }
+    ],
+    'churachandpur': [
+      { icon: '👮', title: 'CCpur Police', num: '03874-234567', note: 'District HQ', tel: '03874234567' },
+      { icon: '🏥', title: 'District Hospital', num: '03874-234100', note: 'Emergency 24/7', tel: '03874234100' },
+      { icon: '🚒', title: 'Fire Station', num: '101', note: 'Churachandpur', tel: '101' },
+      { icon: '🎒', title: 'Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7', tel: '1363' }
+    ],
+    'senapati': [
+      { icon: '👮', title: 'Senapati Police', num: '03872-222345', note: 'District HQ', tel: '03872222345' },
+      { icon: '🏥', title: 'District Hospital', num: '03872-222100', note: 'Emergency 24/7', tel: '03872222100' },
+      { icon: '🚒', title: 'Fire Station', num: '101', note: 'Senapati', tel: '101' },
+      { icon: '🎒', title: 'Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7', tel: '1363' }
+    ]
+  };
+
+  // Default contacts for districts without specific data
+  const defaultContacts = [
+    { icon: '👮', title: 'District Police', num: '100', note: 'National police helpline', tel: '100' },
+    { icon: '🏥', title: 'Ambulance', num: '108', note: 'Free emergency ambulance', tel: '108' },
+    { icon: '🚒', title: 'Fire Station', num: '101', note: 'Fire & rescue', tel: '101' },
+    { icon: '🎒', title: 'Tourist Helpline', num: '1363', note: 'Govt. of India · 24/7', tel: '1363' }
+  ];
+
+  window.loadContacts = () => {
+    const district = document.getElementById('district-select').value;
+    const data = contacts[district] || defaultContacts;
+    const grid = document.getElementById('contacts-grid');
+    grid.innerHTML = data.map(c => `
+      <div class="contact-card">
+        <span class="contact-icon">${c.icon}</span>
+        <div>
+          <div class="contact-title">${c.title}</div>
+          <div class="contact-num">${c.num}</div>
+          <div class="contact-note">${c.note}</div>
+          <a class="call-btn" href="tel:${c.tel}">📞 Call now</a>
+        </div>
+      </div>`).join('');
+  };
+
+  loadContacts();
+</script>
+</body>
+</html>

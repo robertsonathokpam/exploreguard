@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ExploreGuard — Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #f0faf5; min-height: 100vh; }
+    nav { background: #fff; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0; }
+    .nav-logo { font-size: 20px; font-weight: 600; color: #1D9E75; }
+    .nav-user { display: flex; align-items: center; gap: 12px; }
+    .nav-user span { font-size: 14px; color: #555; }
+    .logout-btn { padding: 7px 16px; background: transparent; border: 1.5px solid #1D9E75; color: #1D9E75; border-radius: 8px; cursor: pointer; font-size: 14px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+    h2 { font-size: 24px; color: #1a1a1a; margin-bottom: 0.3rem; }
+    .subtitle { color: #666; font-size: 15px; margin-bottom: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 2.5rem; }
+    .card { background: #fff; border-radius: 14px; padding: 1.5rem; border: 1px solid #e8e8e8; text-decoration: none; display: block; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .card-icon { font-size: 32px; margin-bottom: 12px; }
+    .card-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+    .card-sub { font-size: 13px; color: #888; }
+    .bookings-section { background: #fff; border-radius: 14px; padding: 1.5rem; border: 1px solid #e8e8e8; }
+    .bookings-section h3 { font-size: 18px; margin-bottom: 1rem; color: #1a1a1a; }
+    .booking-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+    .booking-item:last-child { border-bottom: none; }
+    .booking-info { display: flex; flex-direction: column; gap: 3px; }
+    .booking-type { font-size: 13px; font-weight: 600; color: #1D9E75; text-transform: uppercase; }
+    .booking-route { font-size: 15px; color: #1a1a1a; }
+    .booking-date { font-size: 13px; color: #888; }
+    .cancel-btn { padding: 6px 14px; background: #fff; border: 1.5px solid #e74c3c; color: #e74c3c; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    .cancel-btn:hover { background: #fdf0f0; }
+    .empty { text-align: center; color: #aaa; padding: 2rem; font-size: 15px; }
+  </style>
+</head>
+<body>
+<nav>
+  <span class="nav-logo">🗺 ExploreGuard</span>
+  <div class="nav-user">
+    <span id="user-name">Loading...</span>
+    <button class="logout-btn" onclick="logoutUser()">Sign Out</button>
+  </div>
+</nav>
+
+<div class="container">
+  <h2 id="welcome-msg">Welcome back!</h2>
+  <p class="subtitle">Your tourist companion dashboard</p>
+
+  <div class="grid">
+    <a class="card" href="booking.html">
+      <div class="card-icon">✈️</div>
+      <div class="card-title">Book Transport</div>
+      <div class="card-sub">Flight, railway & cab bookings</div>
+    </a>
+    <a class="card" href="alerts.html">
+      <div class="card-icon">⛈️</div>
+      <div class="card-title">Weather Alerts</div>
+      <div class="card-sub">Live disaster & weather info</div>
+    </a>
+    <a class="card" href="tracker.html">
+      <div class="card-icon">📍</div>
+      <div class="card-title">Location Tracker</div>
+      <div class="card-sub">Share your journey safely</div>
+    </a>
+    <a class="card" href="safety.html">
+      <div class="card-icon">🛡️</div>
+      <div class="card-title">Safety & Police</div>
+      <div class="card-sub">Emergency contacts near you</div>
+    </a>
+  </div>
+
+  <div class="bookings-section">
+    <h3>Your Bookings</h3>
+    <div id="bookings-list"><div class="empty">Loading your bookings...</div></div>
+  </div>
+</div>
+
+<script type="module">
+  import { auth, db } from './firebase-config.js';
+  import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { collection, query, where, getDocs, deleteDoc, doc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  let currentUser = null;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
+    document.getElementById('user-name').textContent = user.displayName || user.email;
+    document.getElementById('welcome-msg').textContent = `Welcome back, ${user.displayName || 'Traveller'}!`;
+    loadBookings(user.uid);
+  });
+
+  // READ operation — fetch all bookings from Firestore for this user
+  async function loadBookings(uid) {
+    const list = document.getElementById('bookings-list');
+    try {
+      const q = query(collection(db, 'bookings'), where('userId', '==', uid), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        list.innerHTML = '<div class="empty">No bookings yet. <a href="booking.html">Book your first trip!</a></div>';
+        return;
+      }
+      list.innerHTML = '';
+      snap.forEach(docSnap => {
+        const b = docSnap.data();
+        list.innerHTML += `
+          <div class="booking-item">
+            <div class="booking-info">
+              <span class="booking-type">${b.type}</span>
+              <span class="booking-route">${b.from} → ${b.to}</span>
+              <span class="booking-date">${b.date} · ${b.passengers} passenger(s)</span>
+            </div>
+            <button class="cancel-btn" onclick="cancelBooking('${docSnap.id}')">Cancel</button>
+          </div>`;
+      });
+    } catch (e) {
+      list.innerHTML = '<div class="empty">Could not load bookings.</div>';
+    }
+  }
+
+  // DELETE operation — remove booking from Firestore
+  window.cancelBooking = async (bookingId) => {
+    if (!confirm('Cancel this booking?')) return;
+    await deleteDoc(doc(db, 'bookings', bookingId));
+    loadBookings(currentUser.uid);
+  };
+
+  window.logoutUser = async () => {
+    await signOut(auth);
+    window.location.href = 'login.html';
+  };
+</script>
+</body>
+</html>
