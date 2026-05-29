@@ -1,4 +1,4 @@
-# ExploreGuard — Technical Interview Prep & Resume Notes
+# ExploreGuard - Technical Interview Prep & Resume Notes
 
 Use this guide to prepare for your upcoming developer interview. It breaks down the system's architecture, data flows, file-by-file logic, and common interview questions so you can explain your work confidently to a hiring manager.
 
@@ -6,7 +6,7 @@ Use this guide to prepare for your upcoming developer interview. It breaks down 
 
 ## 📝 How to Describe ExploreGuard on Your Resume
 
-**ExploreGuard — Smart Serverless Tourist Companion App**
+**ExploreGuard - Smart Serverless Tourist Companion App**
 > *Developed a premium serverless web application to assist travelers navigating Northeast India with real-time safety, ticketing, and live geolocation-sharing utilities.*
 > 
 > - **Modern Responsive UI:** Designed a responsive, mobile-first frontend using HTML5, CSS3 Custom Properties, Glassmorphism, and Lucide vector icons.
